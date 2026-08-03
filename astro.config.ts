@@ -8,38 +8,38 @@ export default defineConfig({
     starlight({
       title: "GDPatch",
       logo: {
-        src: "./public/favicon.svg",
+        src: "./public/favicon.svg"
       },
       social: [
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/GDPatch/GDPatch",
-        },
+          href: "https://github.com/GDPatch/GDPatch"
+        }
       ],
       editLink: {
-        baseUrl: "https://github.com/GDPatch/website/edit/main/",
+        baseUrl: "https://github.com/GDPatch/website/edit/main/"
       },
 
       sidebar: [
         {
           label: "Using GDPatch",
-          items: [{ autogenerate: { directory: "using" } }],
+          items: [{ autogenerate: { directory: "using" } }]
         },
         {
           label: "Mod developers",
-          items: [{ autogenerate: { directory: "modding" } }],
+          items: [{ autogenerate: { directory: "modding" } }]
         },
         {
           label: "GDPatch developers",
-          items: [{ autogenerate: { directory: "developing" } }],
-        },
+          items: [{ autogenerate: { directory: "developing" } }]
+        }
       ],
 
       components: {
-        Pagination: "./src/components/overrides/Pagination.astro",
+        Pagination: "./src/components/overrides/Pagination.astro"
       },
-      customCss: ["./src/styles/godot.css"],
-    }),
-  ],
+      customCss: ["./src/styles/godot.css"]
+    })
+  ]
 });

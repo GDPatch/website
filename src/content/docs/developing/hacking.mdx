@@ -36,3 +36,29 @@ Please make sure your commits pass rustfmt and Clippy:
 cargo fmt
 cargo clippy --fix
 ```
+
+## Publishing a release
+
+:::note
+This section is here for GDPatch maintainers who forget what they're doing. Normal users and contributors PRing changes don't need to worry about this.
+:::
+
+- Run `cargo fmt` and `cargo clippy` first!
+- Edit the crate version in `Cargo.toml`, and build to make sure `Cargo.lock` gets updated as well.
+- Commit a version bump: `git commit -s -m "vX.Y.Z"`, and `git push`.
+- Wait for CI to pass. If you don't do this you will make Jules cry. You wouldn't want to make Jules cry, would you Katie?
+- Create an annotated tag: `git tag -s -a vX.Y.Z`, and write a tag description in Markdown like so:
+  - The first line should always be the version number!
+  - If you're a jj freak like Jules, don't forget to `jj new main` before and `jj git import` after.
+
+```md
+vX.Y.Z
+
+- Added some stuff
+- Did some other things
+- Achieved world domination
+```
+
+- `git push --tags`
+- Wait through a very tense 5 minutes and hope you didn't fuck something up.
+- Profit(?)
