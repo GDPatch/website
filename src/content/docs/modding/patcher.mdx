@@ -38,15 +38,6 @@ local pack = GDPatch.get_pack()
 print("The pack at " .. pack.path .. "'s first file is " .. pack.files[1])
 ```
 
-### `GDPatch.get_mods()`
-
-Returns an array containing all loaded mod manifests. You can access the mod ID via the `id` field.
-
-```lua title="Example"
-local mods = GDPatch.get_mods()
-print("There are " .. #mod_ids .. " mods loaded")
-```
-
 ### `GDPatch.patch_script_as_text()`
 
 - Arguments:
@@ -94,6 +85,15 @@ GDPatch.patch_project_settings(function(settings)
   })
   return settings
 end)
+```
+
+### `GDPatch.get_mods()`
+
+Returns an array containing all loaded mod manifests. You can access the mod ID via the `id` field.
+
+```lua title="Example"
+local mods = GDPatch.get_mods()
+print("There are " .. #mod_ids .. " mods loaded")
 ```
 
 ### `GDPatch.get_config_option()`
