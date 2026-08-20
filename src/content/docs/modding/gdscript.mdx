@@ -30,6 +30,29 @@ var mods = GDPatch.get_mods()
 print("Loaded mods: ", mods)
 ```
 
+### `GDPatch.get_root_directory()`
+
+Returns the root directory used by GDPatch (usually next to the game install).
+
+```gdscript title="Example"
+var root_directory = GDPatch.get_root_directory()
+# usually something like /path/to/game/GDPatch
+print("Root directory: ", root_directory)
+```
+
+### `GDPatch.get_mod_directory()`
+
+- Arguments:
+  - `mod_id`: `string`
+
+Returns the directory of a given mod ID if it exists.
+
+```gdscript title="Example"
+var mod_directory = GDPatch.get_mod_directory("example_mod")
+# usually something like /path/to/game/GDPatch/mods/example_mod
+print("Mod directory: ", mod_directory)
+```
+
 ### `GDPatch.get_config_option()`
 
 - Arguments:
