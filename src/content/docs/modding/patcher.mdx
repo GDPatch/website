@@ -10,13 +10,15 @@ Since these scripts are loaded before the game finishes loading, **patchers exis
 
 The Lua version in use is Lua 5.5. `print` statements will be redirected to the GDPatch log file.
 
-## Simple text patching
+## Choosing a patcher API
 
-We suggest using simple text patching if you're new to GDPatch, or if your change is relatively trivial. We suggest you reference [a project decompilation](/modding/getting-started/#helpful-tools) and print the script's source code (`print(src)`) while working on patches. Make sure to return the modified string in the patcher function!
+### Simple text patching
 
-Consider reading about [Lua's pattern system](https://www.lua.org/manual/5.5/manual.html#6.5.1) for advanced string matching.
+We suggest using simple text patching if you're new to GDPatch, or if your change is relatively trivial. Text-based patching is performed with the [`GDPatch.patch_script_as_text`](#gdpatchpatch_script_as_text) function.
 
-## Advanced AST patching
+We suggest you reference [a project decompilation](/modding/getting-started/#helpful-tools) and print the script's source code (`print(src)`) while working on patches.
+
+### Advanced AST patching
 
 TODO
 
@@ -51,9 +53,16 @@ Most game scripts are stored in GDScript binary form (`.gdc`), in which case GDP
 
 **The script source code passed to this function is normalized**. Any special formatting (from the original game script or from other mods) is lost. This is done to improve compatibility of text-based patching from multiple mods at once.
 
+We suggest using [string.gsub](https://www.lua.org/manual/5.5/manual.html#6.5) with [`gdpatch.utils.escape`](#utils.escape) to write most patches. Experienced developers can utilize [Lua's pattern system](https://www.lua.org/manual/5.5/manual.html#6.5.1) for advanced string matching. Consider using [Lua's `[[` string notation](https://www.lua.org/pil/2.4.html) for syntax-heavy snippets.
+
 ```lua title="Example"
+local utils = require("gdpatch.utils")
+
 GDPatch.patch_script_as_text("Scripts/Player.gdc", function(ctx, src)
-  return src:gsub("const MAX_HEALTH = 10", "const MAX_HEALTH = 100")
+  return src:gsub(
+    utils.escape("const MAX_HEALTH = 10"),
+    utils.escape("const MAX_HEALTH = 100", true)
+  )
 end)
 ```
 
@@ -460,14 +469,20 @@ print(utils.escape("..."))
 
 - Arguments:
   - `str`: `string`
+  - `percent_only`: `boolean` (optional)
 
-Escapes special characters in a string that could be interpreted as a Lua pattern. This is helpful if you're replacing GDScript in [`GDPatch.patch_script_as_text()`](#gdpatchpatch_script_as_text), as some GDScript characters are also [used for Lua patterns](https://www.lua.org/manual/5.5/manual.html#6.5.1).
+Escapes special characters in a string that could be interpreted as a Lua pattern. This is helpful if you're replacing GDScript in [`GDPatch.patch_script_as_text`](#gdpatchpatch_script_as_text), as some GDScript characters are also used for Lua patterns.
+
+If `percent_only` is true, the return value will only have escaped percentages, matching the behavior of the second argument of `string.gsub`.
 
 ```lua title="Example"
--- if you're new to Lua, that [[ is an alternate way to represent a string
--- https://www.lua.org/pil/2.4.html
-src = src:gsub(
-  utils.escape([[get_tree().root.title = "Game Name"]]),
-  [[get_tree().root.title = "meow :3"]]
-)
+local utils = require("gdpatch.utils")
+
+GDPatch.patch_script_as_text("menu.gdc", function(ctx, src)
+  src = src:gsub(
+    utils.escape([[get_tree().root.title = "Game Name"]]),
+    utils.escape([[get_tree().root.title = "meow :3"]], true)
+  )
+  return src
+end)
 ```
