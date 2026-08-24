@@ -9,9 +9,13 @@ import { Code } from "@astrojs/starlight/components";
 
 These are some absurd quirks and facts we've learned about in the process of making GDPatch. While most of these aren't really useful to know, they're quite amusing to keep around for storytelling!
 
-## GDScript's parser is wacky
+## GDScript is wacky
 
 We observed several bugs in GDScript's tokenizer and parser when porting it into Rust for GDPatch.
+
+### GDScript has no official grammar
+
+GDScript's parser is implemented [in a multi-thousand-line C++ file](https://github.com/godotengine/godot/blob/20b44c9575f3d638d1861813003768155fb0fe9a/modules/gdscript/gdscript_parser.cpp), and there are no official specifications or grammars for the language. The [Godot docs](https://docs.godotengine.org/en/4.6/engine_details/file_formats/gdscript_grammar.html#gdscript-grammar) used to contain a EBNF grammar, but it is "descriptive only" and the engine does not use it. (GDScript is [also not easily described in an EBNF grammar](https://github.com/godotengine/godot-proposals/discussions/14562).)
 
 ### Some Godot versions write garbage into the header
 
@@ -39,7 +43,7 @@ When escaping a carriage return (`\r`) in a string *without* a line feed (`\n`) 
 
 ![A script open in the Godot editor that contains a string escaping a carriage return. The Output pane is visible, filled with logs along the lines of "Unicode parsing error, some characters were replaced with U+FFFD".](./arcane-knowledge/tokenizer-cr.png)
 
-## GDScript identifiers are XORed
+### GDScript identifiers are XORed
 
 In the binary GDScript format, all identifiers are inexplicably XORed with the key `0xB6`. This is presumably a (very weak) attempt at obfuscation. [(source)](https://github.com/godotengine/godot/blob/df6235838b63dd49f448547406e339848455c140/modules/gdscript/gdscript_tokenizer_buffer.cpp#L311-L320)
 
@@ -58,6 +62,12 @@ for (int i = 0; i < len; i++) {
 // ...
 `.trim()} lang="cpp" mark={["0xb6"]} title="gdscript_tokenizer_buffer.cpp" />
 
+## Config files lead to arbitrary code execution
+
+While porting the Variant text parser to Rust, we observed that [object serialization](https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/core/variant/variant_parser.cpp#L995) is *always* enabled, meaning that classes like ConfigFile are unsafe. (This is not a unique discovery from us; there is an [open GitHub issue](https://github.com/godotengine/godot/issues/80562) on this topic.) We discovered this code path could be exploited [within GDRE Tools](https://github.com/GDRETools/gdsdecomp/releases/tag/v2.6.4) with a malicious pack file, as well as within a published Godot game.
+
+<br />
+<BlueskyPost uri="at://did:plc:ra3gxl2udc22odfbvcfslcn3/app.bsky.feed.post/3mstj53clss2p" />
 
 ## `cargo test` will load GDPatch
 
@@ -65,10 +75,6 @@ Because GDPatch is implemented as a dynamic library that's loaded into the game 
 
 <br />
 <BlueskyPost uri="at://did:plc:ra3gxl2udc22odfbvcfslcn3/app.bsky.feed.post/3mo6fl7y7meow" />
-
-## GDScript has no official grammar
-
-GDScript's parser is implemented [in a multi-thousand-line C++ file](https://github.com/godotengine/godot/blob/20b44c9575f3d638d1861813003768155fb0fe9a/modules/gdscript/gdscript_parser.cpp), and there are no official specifications or grammars for the language. The [Godot docs](https://docs.godotengine.org/en/4.6/engine_details/file_formats/gdscript_grammar.html#gdscript-grammar) used to contain a EBNF grammar, but it is "descriptive only" and the engine does not use it. (GDScript is [also not easily described in an EBNF grammar](https://github.com/godotengine/godot-proposals/discussions/14562).)
 
 ## Godot doesn't reuse file handles
 
