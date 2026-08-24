@@ -96,6 +96,28 @@ GDPatch.patch_project_settings(function(settings)
 end)
 ```
 
+### `GDPatch.patch_file()`
+
+- Arguments:
+  - `paths`: `string | string[]`
+  - `callback`: `function(PatcherContext, string): string`
+  - `options`: `PatcherCallbackOptions` (optional)
+
+Registers a callback function for the path(s) provided. The callback function receives a [`PatcherContext`](#patchercontext) and the file's string contents, and returns the modified contents. `paths` can either be a string or table of strings, and the paths should *not* contain the `res://` prefix.
+
+This is used for text-based resources included in a game like `.json` or `.gdshader`. You cannot edit scripts or binary resources (e.g. scenes) with this function.
+
+```lua title="Example"
+local utils = require("gdpatch.utils")
+
+GDPatch.patch_file("Shaders/shader.gdshader", function(ctx, src)
+  return src:gsub(
+    utils.escape("pos = (floor(pos * res + off) + 0.5) / res;"),
+    ""
+  )
+end)
+```
+
 ### `GDPatch.get_mods()`
 
 Returns an array containing all loaded mod manifests. You can access the mod ID via the `id` field.
