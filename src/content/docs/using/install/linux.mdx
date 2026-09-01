@@ -13,3 +13,23 @@ import { Steps } from "@astrojs/starlight/components";
    LD_PRELOAD=/path/to/libgdpatch_loader.so ./game.x86_64
    ```
 </Steps>
+
+## Running under Steam
+
+For games running natively under Steam, you must do a few additional steps:
+
+<Steps>
+1. Copy `libgdpatch_loader.so` into your game directory.
+2. Download [run_with_gdpatch.sh](/run_with_gdpatch.sh) and copy it into your game directory:
+
+   ```bash
+   wget https://gdpatch.dev/run_with_gdpatch.sh
+   chmod +x ./run_with_gdpatch.sh
+   ```
+
+3. Set the game's Launch Options in Steam (right click > Properties > General):
+
+   ```
+   ./run_with_gdpatch.sh %command%
+   ```
+</Steps>

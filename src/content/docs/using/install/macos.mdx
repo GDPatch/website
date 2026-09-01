@@ -13,3 +13,11 @@ import { Steps } from "@astrojs/starlight/components";
    DYLD_INSERT_LIBRARIES=/path/to/libgdpatch_loader.dylib ./game
    ```
 </Steps>
+
+## Running under Steam
+
+For games running natively under Steam, you must set the game's Launch Options in Steam (right click > Properties > General):
+
+```
+DYLD_INSERT_LIBRARIES=/path/to/libgdpatch_loader.dylib %command%
+```
